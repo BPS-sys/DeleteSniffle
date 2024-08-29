@@ -17,9 +17,9 @@ def build_audiosep(config_yaml, checkpoint_path, device):
     print(f'Loaded AudioSep model from [{checkpoint_path}]')
     return model
 
-def separate_audio(model, audio_file, text, output_file, device='cuda', use_chunk=False):
+def separate_audio(model, audio_file, text, output_file, freeq=None, device='cuda', use_chunk=False):
     print(f'Separating audio from [{audio_file}] with textual query: [{text}]')
-    mixture, fs = librosa.load(audio_file, sr=48000, mono=True)
+    mixture, fs = librosa.load(audio_file, sr=freeq, mono=True)
     with torch.no_grad():
         text = [text]
 
@@ -41,7 +41,7 @@ def separate_audio(model, audio_file, text, output_file, device='cuda', use_chun
             sep_segment = model.ss_model(input_dict)["waveform"]
             sep_segment = sep_segment.squeeze(0).squeeze(0).data.cpu().numpy()
 
-        write(output_file, 48000, np.round(sep_segment * 32767).astype(np.int16))
+        write(output_file, freeq, np.round(sep_segment * 32767).astype(np.int16))
         print(f'Separated audio written to [{output_file}]')
 
 if __name__ == '__main__':
