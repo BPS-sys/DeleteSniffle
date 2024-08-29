@@ -1,4 +1,4 @@
 # DeleteSniffle
 
-#1. Clone
+1. Clone
 https://github.com/Audio-AGI/AudioSep
